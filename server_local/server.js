@@ -67,7 +67,7 @@ function joinRoom(msg, client) {
 function nextMusic(msg) {
     let roomId = msg.roomId;
 
-    if (roomMusics.hasOwnProperty(roomId)) return;
+    if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
     rooms[roomId].forEach((user) => {
         sendToClient(user.client, "nextMusic", { token: roomMusics[roomId][currentMusic[roomId]].videoId});
