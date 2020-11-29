@@ -15,7 +15,7 @@ wss.on('connection', (client) => {
     client.on('message', (message) => {
         let msg = JSON.parse(message);
         if (msg.id === "newRoom") {
-            newRoom(client);
+            newRoom(msg.data, client);
         } else if (msg.id === "joinRoom") {
             joinRoom(msg.data, client);
         } else if (msg.id === "nextMusic") {
@@ -28,13 +28,14 @@ wss.on('connection', (client) => {
     })
 });
 
-function newRoom(client) {
+function newRoom(msg, client) {
     roomsNb += 1;
     let room = `room-${roomsNb}`;
     userNb += 1;
     let userId = `U_${userNb}`;
+    let pseudo = msg.pseudo;
 
-    rooms[room] = [{ id: userId, client: client }];
+    rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
     currentMusic[room] = 0;
 
     sendToClient(client,
@@ -50,13 +51,14 @@ function joinRoom(msg, client) {
     let room = msg.roomId;
     userNb += 1;
     let userId = `U_${userNb}`;
+    let pseudo = msg.pseudo;
 
     if (!rooms.hasOwnProperty(room)) {
         sendToClient(client, "roomJoined", { status: 404 });
         return;
     }
 
-    rooms[room].push({ id: userId, client: client });
+    rooms[room].push({ id: userId, client: client, pseudo: pseudo });
     sendToClient(client, "roomJoined", { status: 200, userId: userId });
 
     client.on('close', () => {
