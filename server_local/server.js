@@ -28,14 +28,12 @@ wss.on('connection', (client) => {
     })
 });
 
-
-//TO-DO : intégrer le pseudo
 function newRoom(msg, client) {
     roomsNb += 1;
     let room = `room-${roomsNb}`;
     userNb += 1;
     let userId = `U_${userNb}`;
-    let pseudo = msg.pseudo
+    let pseudo = msg.pseudo;
 
     rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
     currentMusic[room] = 0;

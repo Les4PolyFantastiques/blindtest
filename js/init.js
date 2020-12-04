@@ -6,7 +6,7 @@ let pseudoField = document.getElementById("register-userid");
 function joinRoom() {
     let roomId = "room-" + roomIdFiel.value;
     let pseudo = pseudoField.value;
-    roomServer.emit("joinRoom", { roomId: roomId, pseudo:pseudo });
+    roomServer.emit("joinRoom", { roomId: roomId, pseudo: pseudo });
     roomServer.register("roomJoined", (data) => {
         if (data.status === 404) {
             alert("Room id not correct");
@@ -22,7 +22,7 @@ function joinRoom() {
 
 function createRoom() {
     let pseudo = pseudoField.value;
-    roomServer.emit("newRoom", {pseudo:pseudo});
+    roomServer.emit("newRoom", {pseudo: pseudo});
     roomServer.register("roomCreated", (data) => {
         console.log(data.userId);
         console.log(data.roomId);
