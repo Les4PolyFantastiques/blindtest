@@ -112,16 +112,16 @@ body {
     margin-bottom: 10px;
 }
 
-#join-room-div {
+#join-room-div #pseudo-div {
     margin-bottom: 50px;
     text-align: center;
 }
 
-#join-room-div label {
+#join-room-div #pseudo-div label {
     font-size: 2em;
 }
 
-#join-room-div input[type="text"] {
+#join-room-div #pseudo-div input[type="text"] {
     height: 1.5em;
 }
 
