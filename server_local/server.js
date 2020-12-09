@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 let rooms = {};
 let currentMusic = {};
+let reponse = {};
 let roomMusics = {};
 let roomsNb = 0;
 let userNb = 0;
@@ -24,7 +25,9 @@ wss.on('connection', (client) => {
             submitMusic(msg.data, client);
         } else if (msg.id === "playlist") {
             submitPlaylist(msg.data, client);
-        } 
+        } else if (msg.id == "envoireponse"){
+            envoiReponse(msg.data, client);
+        }
     })
 });
 
@@ -83,6 +86,18 @@ function submitMusic(msg) {
         sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title });
     })
     currentMusic[roomId] += 1;
+}
+
+function envoiReponse(msg, client){
+    let reponse = msg.reponse;
+    let pseudo = msg.pseudo;
+    let room = msg.roomId;
+    if(reponse[room] == null){
+        reponse[room] = [{pseudo: pseudo, reponse: reponse}];
+        console.log(reponse[room].pseudo);
+    }
+    else reponse[room].push({ pseudo: pseudo, reponse: reponse});
+    sendToClient(client, "ReponseEnvoye", { status: 200, tableau: reponse[room], pseudo: pseudo, reponse: reponse });
 }
 
 function submitPlaylist(msg) {

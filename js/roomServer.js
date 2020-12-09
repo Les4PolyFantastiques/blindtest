@@ -2,6 +2,7 @@ class RoomServer {
     msgHandlers
     ws;
     roomId;
+    pseudo;
 
     constructor() {
         this.ws = new WebSocket('ws://localhost:3000');

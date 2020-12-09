@@ -9,12 +9,14 @@ function joinRoom() {
     roomServer.emit("joinRoom", { roomId: roomId, pseudo: pseudo });
     roomServer.register("roomJoined", (data) => {
         if (data.status === 404) {
+            console.log("Room id not correct");
             alert("Room id not correct");
         } else if (data.status === 200) {
             console.log(data.userId);
             console.log(roomId);
             console.log(pseudo)
-            roomServer.roomId = roomId;
+            roomServer.roomId = roomId
+            roomServer.pseudo = pseudo;
             startGame(false);
         }
     });
@@ -27,6 +29,7 @@ function createRoom() {
         console.log(data.userId);
         console.log(data.roomId);
         roomServer.roomId = data.roomId;
+        roomServer.pseudo = pseudo;
         startGame(true);
     });
 }

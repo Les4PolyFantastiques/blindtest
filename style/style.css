@@ -192,6 +192,26 @@ body {
     left: 10px;
 }
 
+#boutonReponse {
+    position: absolute;
+    display: none;
+    left: 255px;
+    top: 260px;
+}
+
+#reponseField {
+    position: absolute;
+    display: none;
+    left: 90px;
+    top: 270px;
+}
+
+#texteReponse {
+    position: absolute;
+    display: none;
+    left: 10px;
+    top: 270px;
+}
 
 #submit-playlist {
     grid-area: playlist;
