@@ -171,17 +171,6 @@ body {
     margin-left: auto;
 }
 
-#reveal-answer-div {
-    position: relative;
-    grid-area: reveal;
-}
-
-#reveal-answer-button {
-    position: absolute;
-    display: none;
-    right: 10px;
-}
-
 #next-music-div {
     position: relative;
     grid-area: next;
@@ -212,6 +201,13 @@ body {
     display: none;
     left: 10px;
     top: 270px;
+}
+
+#tableauReponse {
+    position: absolute;
+    display: table;
+    left: 10px;
+    top: 300px;
 }
 
 #submit-playlist {
