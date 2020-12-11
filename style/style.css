@@ -73,6 +73,20 @@ body {
     font-size: 40px;
 }
 
+table {
+    border-collapse: collapse;
+}
+th {
+    border: 1px solid black;
+    text-align: center;
+    width: 200px;
+}
+td {
+    border: 1px solid black;
+    text-align: left;
+    width: 200px;
+}
+
 /*************** Login Pop up *************/
 
 #login-screen {
