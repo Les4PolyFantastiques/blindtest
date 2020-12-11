@@ -2,6 +2,9 @@ let nextButton = document.getElementById("next-music-button");
 let submitButton = document.getElementById("reveal-answer-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
+let boutonReponse = document.getElementById("boutonReponse");
+let reponseField = document.getElementById("reponseField");
+let texteReponse = document.getElementById("texteReponse");
 
 var player1;
 done = true;
@@ -12,7 +15,7 @@ function startGame(isCreator) {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+    
     if (!isCreator) {
         submitPlaylistDiv.style.display = "none";
         textDiv.innerText = "Waiting for the creator to select a playlist";
@@ -84,6 +87,9 @@ function submitAnswer() {
 }
 
 function playNextMusic(data) {
+    reponseField.style.display = "block";
+    boutonReponse.style.display = "block";
+    texteReponse.style.display = "block";
     done = false;
     submitButton.style.display = "initial";
     nextButton.style.display = "none";
@@ -106,3 +112,21 @@ function revealAnswer(data) {
     player1.pauseVideo();
     textDiv.innerText = data.title;
 }
+
+function envoyerReponse(){
+    let reponse = reponseField.value;
+    let pseudo = roomServer.pseudo;
+    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo });
+    roomServer.register("ReponseEnvoye", (data) => {
+        if (data.status === 404) {
+            alert("Reponse non transmise");
+        } else if (data.status === 200) {
+            console.log("ReponseEnvoyé");
+            console.log(data.pseudo);
+            console.log(data.reponse);
+            console.log(data.tableau);
+        }
+    });
+}
+
+boutonReponse.addEventListener("click", envoyerReponse);

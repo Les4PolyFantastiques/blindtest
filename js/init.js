@@ -14,7 +14,8 @@ function joinRoom() {
             console.log(data.userId);
             console.log(roomId);
             console.log(pseudo)
-            roomServer.roomId = roomId;
+            roomServer.roomId = roomId
+            roomServer.pseudo = pseudo;
             startGame(false);
         }
     });
@@ -27,6 +28,7 @@ function createRoom() {
         console.log(data.userId);
         console.log(data.roomId);
         roomServer.roomId = data.roomId;
+        roomServer.pseudo = pseudo;
         startGame(true);
     });
 }
