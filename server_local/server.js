@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 
 let rooms = {};
+let roomsInGame = {};
 let currentMusic = {};
 let reponses = {};
 let roomMusics = {};
@@ -38,6 +39,7 @@ function newRoom(msg, client) {
     let userId = `U_${userNb}`;
     let pseudo = msg.pseudo;
 
+    roomsInGame[room] = {inGame: false};
     rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
     currentMusic[room] = 0;
 
@@ -56,7 +58,7 @@ function joinRoom(msg, client) {
     let userId = `U_${userNb}`;
     let pseudo = msg.pseudo;
 
-    if (!rooms.hasOwnProperty(room)) {
+    if (!rooms.hasOwnProperty(room) || roomsInGame[room].inGame == true) {
         sendToClient(client, "roomJoined", { status: 404 });
         return;
     }
@@ -101,6 +103,8 @@ function receptionReponse(msg, client){
 
 function submitPlaylist(msg) {
     let roomId = msg.roomId;
+
+    roomsInGame[roomId].inGame = true;
 
     getPlaylist(msg.playlistId, (music) => {
         roomMusics[roomId] = music.sort(() => Math.random() - 0.5);
