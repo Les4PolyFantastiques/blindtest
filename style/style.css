@@ -34,8 +34,8 @@ body {
     grid-template-columns: auto auto;
     grid-template-areas:
         "text text"
-        "playlist playlist"
-        "reveal next";
+        "reveal next"
+        "scoreboard scoreboard";
 }
 
 #menu {
@@ -193,11 +193,28 @@ body {
     left: 10px;
 }
 
+#reponse-div {
+    position : relative;
+    grid-area: scoreboard;
+}
+
 #boutonReponse {
     position: absolute;
     display: none;
     left: 255px;
     top: 260px;
+}
+
+#vf-div {
+    position : relative;
+    grid-area: scoreboard;
+}
+
+#vf-div button {
+    background-color: #B43636;
+    color: black;
+    display: none;
+    height: 30px;
 }
 
 #reponseField {
@@ -215,7 +232,7 @@ body {
 }
 
 #submit-playlist {
-    grid-area: playlist;
+    grid-area: text;
     margin: auto;
 }
 

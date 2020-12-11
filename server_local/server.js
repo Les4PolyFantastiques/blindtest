@@ -86,6 +86,7 @@ function submitMusic(msg) {
 
     rooms[roomId].forEach((user) => {
         sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title });
+        //sendToClient(user.client, "scoreUpdate", reponse[room])
     })
     currentMusic[roomId] += 1;
 }

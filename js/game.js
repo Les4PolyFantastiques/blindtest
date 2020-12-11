@@ -3,8 +3,10 @@ let submitButton = document.getElementById("reveal-answer-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
 let boutonReponse = document.getElementById("boutonReponse");
+let reponsediv = document.getElementById("reponse-div");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
+let boutonVF = document.getElementById("vf-bouton");
 
 var player1;
 done = true;
@@ -34,6 +36,7 @@ function onYouTubeIframeAPIReady() {
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
+    //roomServer.register("scoreUpdate")
 
     if (AmICreator) {
         document.getElementById("submit-playlist-button").addEventListener("click", submitPlaylist);
@@ -93,6 +96,8 @@ function playNextMusic(data) {
     done = false;
     submitButton.style.display = "initial";
     nextButton.style.display = "none";
+    boutonVF.style.display = "none";
+    reponsediv.style.display = "initial"
     textDiv.innerText = "Now Playing";
     var ctrlq1 = document.getElementById("youtube-audio1");
     ctrlq1.dataset.video = data.token;
@@ -109,6 +114,8 @@ function revealAnswer(data) {
     done = true;
     submitButton.style.display = "none";
     nextButton.style.display = "initial";
+    boutonVF.style.display = "initial";
+    reponsediv.style.display = "none"
     player1.pauseVideo();
     textDiv.innerText = data.title;
 }
@@ -129,4 +136,19 @@ function envoyerReponse(){
     });
 }
 
+function changeVF(){
+    if(boutonVF.innerHTML == 'FAUX'){
+        boutonVF.innerHTML = 'VRAI'
+        boutonVF.style.backgroundColor = "#1D8B28";
+    } else {
+        boutonVF.innerHTML = 'FAUX';
+        boutonVF.style.backgroundColor = "#B43636";
+    }
+}
+
+function envoyerchangement(vf){
+    
+}
+
 boutonReponse.addEventListener("click", envoyerReponse);
+boutonVF.addEventListener("click", changeVF)
