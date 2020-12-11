@@ -1,10 +1,10 @@
 let nextButton = document.getElementById("next-music-button");
-let submitButton = document.getElementById("reveal-answer-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
 let boutonReponse = document.getElementById("boutonReponse");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
+var tableauReponse = document.getElementById("tableauReponse");
 
 var player1;
 done = true;
@@ -30,7 +30,6 @@ function onYouTubeIframeAPIReady() {
     document.getElementById("room-id").innerText = roomServer.roomId;
 
     nextButton.addEventListener("click", next);
-    submitButton.addEventListener("click", submitAnswer);
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
@@ -69,7 +68,7 @@ function onPlayerReady1(event) {
 
 function onPlayerStateChange1(event) {
     if (event.data == 1 && !done) {
-        setTimeout(stopVideo, 30000);
+        setTimeout(stopVideo, 10000);
         done = true;
     }
 }
@@ -90,8 +89,14 @@ function playNextMusic(data) {
     reponseField.style.display = "block";
     boutonReponse.style.display = "block";
     texteReponse.style.display = "block";
+    tableauReponse.style.display = "none";
+  
+    var longueur = tableauReponse.rows.length;
+    for(i=0; i < longueur; i++){
+        tableauReponse.deleteRow(-1);
+    }
+
     done = false;
-    submitButton.style.display = "initial";
     nextButton.style.display = "none";
     textDiv.innerText = "Now Playing";
     var ctrlq1 = document.getElementById("youtube-audio1");
@@ -107,10 +112,23 @@ function submitPlaylist() {
 
 function revealAnswer(data) {
     done = true;
-    submitButton.style.display = "none";
     nextButton.style.display = "initial";
     player1.pauseVideo();
     textDiv.innerText = data.title;
+    var array = data.reponse;
+    if(array != null){
+        array.forEach(element => {
+            var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
+	        var colonne1 = ligne.insertCell(0);//on a une ajouté une cellule
+	        colonne1.innerHTML += element.pseudo;
+	        var colonne2 = ligne.insertCell(1);//on ajoute la seconde cellule
+	        colonne2.innerHTML += element.reponse;
+        });
+    }
+    console.log(tableauReponse);
+    if(tableauReponse != null){
+        tableauReponse.style.display = "table";
+    }
 }
 
 function envoyerReponse(){
@@ -122,11 +140,9 @@ function envoyerReponse(){
             alert("Reponse non transmise");
         } else if (data.status === 200) {
             console.log("ReponseEnvoyé");
-            console.log(data.pseudo);
-            console.log(data.reponse);
-            console.log(data.tableau);
         }
     });
+    boutonReponse.style.display = "none";
 }
 
 boutonReponse.addEventListener("click", envoyerReponse);

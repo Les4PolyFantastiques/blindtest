@@ -73,7 +73,8 @@ function joinRoom(msg, client) {
 
 function nextMusic(msg) {
     let roomId = msg.roomId;
-
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
     if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
     rooms[roomId].forEach((user) => {
@@ -85,9 +86,11 @@ function submitMusic(msg) {
     let roomId = msg.roomId;
 
     rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title });
+        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title, reponse: reponses[roomId] });
     })
     currentMusic[roomId] += 1;
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
 }
 
 function receptionReponse(msg, client){
