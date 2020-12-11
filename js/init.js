@@ -8,12 +8,13 @@ function joinRoom() {
     let pseudo = pseudoField.value;
     roomServer.emit("joinRoom", { roomId: roomId, pseudo: pseudo });
     roomServer.register("roomJoined", (data) => {
+        addMyNameToPlayerList();
         if (data.status === 404) {
             alert("Room id not correct");
         } else if (data.status === 200) {
             console.log(data.userId);
             console.log(roomId);
-            console.log(pseudo)
+            console.log(pseudo);
             roomServer.roomId = roomId;
             startGame(false);
         }
@@ -24,11 +25,21 @@ function createRoom() {
     let pseudo = pseudoField.value;
     roomServer.emit("newRoom", {pseudo: pseudo});
     roomServer.register("roomCreated", (data) => {
+        addMyNameToPlayerList();
         console.log(data.userId);
         console.log(data.roomId);
         roomServer.roomId = data.roomId;
         startGame(true);
     });
+}
+
+function addMyNameToPlayerList() {
+    // Maj du tableau des Players
+    var table_players = document.getElementById("table-players");
+    var newLine = table_players.insertRow(-1);
+    var newCel = newLine.insertCell(-1);
+    var playerName = document.createTextNode(pseudoField.value);
+    newCel.appendChild(playerName);
 }
 
 joinButton.addEventListener("click", joinRoom);
