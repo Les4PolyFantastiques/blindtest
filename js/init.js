@@ -9,7 +9,7 @@ function joinRoom() {
     roomServer.emit("joinRoom", { roomId: roomId, pseudo: pseudo });
     roomServer.register("roomJoined", (data) => {
         if (data.status === 404) {
-            alert("Room id not correct");
+            alert("Room id not correct or room already in game");
         } else if (data.status === 200) {
             console.log(data.userId);
             console.log(roomId);
