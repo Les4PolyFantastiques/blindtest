@@ -4,6 +4,7 @@ let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
 
 var player1;
+done = true;
 let AmICreator = false;
 
 function startGame(isCreator) {
@@ -57,17 +58,22 @@ function onPlayerReady1(event) {
     player1.setPlaybackQuality("small");
     document.getElementById("youtube-audio1").style.display = "block";
     player1.playVideo();
+    player1.setVolume(50);
     if (!AmICreator) {
         next();
     }
 }
 
 function onPlayerStateChange1(event) {
-    if (event.data === 0) {
-        togglePlayButton1(false);
+    if (event.data == 1 && !done) {
+        setTimeout(stopVideo, 30000);
+        done = true;
     }
 }
 
+function stopVideo() {
+    submitAnswer();
+  }
 
 function next() {
     roomServer.emit("nextMusic", { roomId: roomServer.roomId});
@@ -78,6 +84,7 @@ function submitAnswer() {
 }
 
 function playNextMusic(data) {
+    done = false;
     submitButton.style.display = "initial";
     nextButton.style.display = "none";
     textDiv.innerText = "Now Playing";
@@ -93,6 +100,7 @@ function submitPlaylist() {
 }
 
 function revealAnswer(data) {
+    done = true;
     submitButton.style.display = "none";
     nextButton.style.display = "initial";
     player1.pauseVideo();
