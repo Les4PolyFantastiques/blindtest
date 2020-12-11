@@ -1,12 +1,11 @@
 let nextButton = document.getElementById("next-music-button");
-let submitButton = document.getElementById("reveal-answer-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
 let boutonReponse = document.getElementById("boutonReponse");
 let reponsediv = document.getElementById("reponse-div");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
-let boutonVF = document.getElementById("vf-bouton");
+var tableauReponse = document.getElementById("tableauReponse");
 
 var player1;
 done = true;
@@ -32,7 +31,6 @@ function onYouTubeIframeAPIReady() {
     document.getElementById("room-id").innerText = roomServer.roomId;
 
     nextButton.addEventListener("click", next);
-    submitButton.addEventListener("click", submitAnswer);
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
@@ -72,7 +70,7 @@ function onPlayerReady1(event) {
 
 function onPlayerStateChange1(event) {
     if (event.data == 1 && !done) {
-        setTimeout(stopVideo, 30000);
+        setTimeout(stopVideo, 10000);
         done = true;
     }
 }
@@ -93,10 +91,15 @@ function playNextMusic(data) {
     reponseField.style.display = "block";
     boutonReponse.style.display = "block";
     texteReponse.style.display = "block";
+    tableauReponse.style.display = "none";
+  
+    var longueur = tableauReponse.rows.length;
+    for(i=0; i < longueur; i++){
+        tableauReponse.deleteRow(-1);
+    }
+
     done = false;
-    submitButton.style.display = "initial";
     nextButton.style.display = "none";
-    boutonVF.style.display = "none";
     reponsediv.style.display = "initial"
     textDiv.innerText = "Now Playing";
     var ctrlq1 = document.getElementById("youtube-audio1");
@@ -112,12 +115,50 @@ function submitPlaylist() {
 
 function revealAnswer(data) {
     done = true;
-    submitButton.style.display = "none";
     nextButton.style.display = "initial";
-    boutonVF.style.display = "initial";
     reponsediv.style.display = "none"
     player1.pauseVideo();
     textDiv.innerText = data.title;
+    var array = data.reponse;
+    displayArray(array);
+    roomServer.register("bonneReponse", function(outerArray){ 
+        var longueur = tableauReponse.rows.length;
+        for(i=0; i < longueur; i++){
+            tableauReponse.deleteRow(-1);
+        }
+        displayArray(outerArray.array);
+    });
+}
+
+function displayArray(array) {
+    console.log(array);
+    if(array != null){
+        array.forEach(element => {
+            var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
+	        var colonne1 = ligne.insertCell(0);//on a une ajouté une cellule
+	        colonne1.innerHTML += element.pseudo;
+	        var colonne2 = ligne.insertCell(1);//on ajoute la seconde cellule
+            colonne2.innerHTML += element.reponse;
+            var colonne3 = ligne.insertCell(2);
+            boutonVF = document.createElement("button");
+            boutonVF.style.backgroundColor = element.vf ? "#1D8B28" : "#B43636";
+            boutonVF.style.color = "#313337";
+            boutonVF.style.height = '30px';
+            boutonVF.style.display = "initial";
+            boutonVF.innerHTML = element.vf ? "TRUE" : "FAUX";
+            colonne3.appendChild(boutonVF);
+            if (AmICreator){
+                boutonVF.addEventListener("click", function(){
+                    element.vf = !element.vf;
+                    roomServer.emit("bonneReponse", {roomId: roomServer.roomId, array:array})
+                });               
+            }
+        });
+    }
+    console.log(tableauReponse);
+    if(tableauReponse != null){
+        tableauReponse.style.display = "table";
+    }
 }
 
 function envoyerReponse(){
@@ -129,26 +170,9 @@ function envoyerReponse(){
             alert("Reponse non transmise");
         } else if (data.status === 200) {
             console.log("ReponseEnvoyé");
-            console.log(data.pseudo);
-            console.log(data.reponse);
-            console.log(data.tableau);
         }
     });
-}
-
-function changeVF(){
-    if(boutonVF.innerHTML == 'FAUX'){
-        boutonVF.innerHTML = 'VRAI'
-        boutonVF.style.backgroundColor = "#1D8B28";
-    } else {
-        boutonVF.innerHTML = 'FAUX';
-        boutonVF.style.backgroundColor = "#B43636";
-    }
-}
-
-function envoyerchangement(vf){
-    
+    reponsediv.style.display = "none";
 }
 
 boutonReponse.addEventListener("click", envoyerReponse);
-boutonVF.addEventListener("click", changeVF)

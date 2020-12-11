@@ -28,6 +28,8 @@ wss.on('connection', (client) => {
             submitPlaylist(msg.data, client);
         } else if (msg.id == "envoireponse"){
             receptionReponse(msg.data, client);
+        } else if (msg.id == "bonneReponse"){
+            bonneReponse(msg.data, client);
         }
     })
 });
@@ -73,7 +75,8 @@ function joinRoom(msg, client) {
 
 function nextMusic(msg) {
     let roomId = msg.roomId;
-
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
     if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
     rooms[roomId].forEach((user) => {
@@ -85,10 +88,11 @@ function submitMusic(msg) {
     let roomId = msg.roomId;
 
     rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title });
-        //sendToClient(user.client, "scoreUpdate", reponse[room])
+        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title, reponse: reponses[roomId] });
     })
     currentMusic[roomId] += 1;
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
 }
 
 function receptionReponse(msg, client){
@@ -96,9 +100,9 @@ function receptionReponse(msg, client){
     let pseudo = msg.pseudo;
     let room = msg.roomId;
     if(reponses[room] == null){
-        reponses[room] = [{pseudo: pseudo, reponse: proposition}];
+        reponses[room] = [{pseudo: pseudo, reponse: proposition, vf: false}];
     }
-    else reponses[room].push({ pseudo: pseudo, reponse: proposition});
+    else reponses[room].push({ pseudo: pseudo, reponse: proposition, vf: false});
     sendToClient(client, "ReponseEnvoye", { status: 200});
 }
 
@@ -113,9 +117,22 @@ function submitPlaylist(msg) {
     });
 }
 
+function bonneReponse(msg, client){
+    // let newvf = msg.vf;
+    let roomId = msg.roomId;
+    reponses[roomId] = msg.array;
+    rooms[roomId].forEach((user) => {
+        sendToClient(user.client, "bonneReponse", { array: reponses[roomId] });
+    });
+
+    //let index = reponses[room].map(function(o){return o.pseudo;}).indexOf(pseudo);
+    
+}
+
 function sendToClient(client, id, msg) {
     client.send(JSON.stringify({ id: id, data: msg }));
 }
+
 
 server.listen(PORT);
 

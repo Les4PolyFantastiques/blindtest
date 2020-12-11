@@ -35,7 +35,7 @@ body {
     grid-template-areas:
         "text text"
         "reveal next"
-        "scoreboard scoreboard";
+        "scoreboard button";
 }
 
 #menu {
@@ -171,17 +171,6 @@ body {
     margin-left: auto;
 }
 
-#reveal-answer-div {
-    position: relative;
-    grid-area: reveal;
-}
-
-#reveal-answer-button {
-    position: absolute;
-    display: none;
-    right: 10px;
-}
-
 #next-music-div {
     position: relative;
     grid-area: next;
@@ -205,9 +194,10 @@ body {
     top: 260px;
 }
 
+/*
 #vf-div {
     position : relative;
-    grid-area: scoreboard;
+    grid-area: button;
 }
 
 #vf-div button {
@@ -216,6 +206,7 @@ body {
     display: none;
     height: 30px;
 }
+*/
 
 #reponseField {
     position: absolute;
@@ -229,6 +220,18 @@ body {
     display: none;
     left: 10px;
     top: 270px;
+}
+
+#tableau-div {
+    position : relative;
+    grid-area: scoreboard;
+}
+
+#tableauReponse {
+    position: absolute;
+    display: table;
+    left: 10px;
+    top: 300px;
 }
 
 #submit-playlist {
