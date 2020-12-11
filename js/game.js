@@ -1,9 +1,13 @@
 let nextButton = document.getElementById("next-music-button");
-let submitButton = document.getElementById("reveal-answer-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
+let boutonReponse = document.getElementById("boutonReponse");
+let reponseField = document.getElementById("reponseField");
+let texteReponse = document.getElementById("texteReponse");
+var tableauReponse = document.getElementById("tableauReponse");
 
 var player1;
+done = true;
 let AmICreator = false;
 
 function startGame(isCreator) {
@@ -11,7 +15,7 @@ function startGame(isCreator) {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+    
     if (!isCreator) {
         submitPlaylistDiv.style.display = "none";
         textDiv.innerText = "Waiting for the creator to select a playlist";
@@ -51,7 +55,6 @@ function onYouTubeIframeAPIReady() {
     document.getElementById("room-id").innerText = roomServer.roomId;
 
     nextButton.addEventListener("click", next);
-    submitButton.addEventListener("click", submitAnswer);
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
@@ -82,17 +85,22 @@ function onPlayerReady1(event) {
     player1.setPlaybackQuality("small");
     document.getElementById("youtube-audio1").style.display = "block";
     player1.playVideo();
+    player1.setVolume(50);
     if (!AmICreator) {
         next();
     }
 }
 
 function onPlayerStateChange1(event) {
-    if (event.data === 0) {
-        //togglePlayButton1(false);
+    if (event.data == 1 && !done) {
+        setTimeout(stopVideo, 10000);
+        done = true;
     }
 }
 
+function stopVideo() {
+    submitAnswer();
+  }
 
 function next() {
     roomServer.emit("nextMusic", { roomId: roomServer.roomId});
@@ -103,7 +111,17 @@ function submitAnswer() {
 }
 
 function playNextMusic(data) {
-    submitButton.style.display = "initial";
+    reponseField.style.display = "block";
+    boutonReponse.style.display = "block";
+    texteReponse.style.display = "block";
+    tableauReponse.style.display = "none";
+  
+    var longueur = tableauReponse.rows.length;
+    for(i=0; i < longueur; i++){
+        tableauReponse.deleteRow(-1);
+    }
+
+    done = false;
     nextButton.style.display = "none";
     textDiv.innerText = "Now Playing";
     var ctrlq1 = document.getElementById("youtube-audio1");
@@ -118,8 +136,38 @@ function submitPlaylist() {
 }
 
 function revealAnswer(data) {
-    submitButton.style.display = "none";
+    done = true;
     nextButton.style.display = "initial";
     player1.pauseVideo();
     textDiv.innerText = data.title;
+    var array = data.reponse;
+    if(array != null){
+        array.forEach(element => {
+            var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
+	        var colonne1 = ligne.insertCell(0);//on a une ajouté une cellule
+	        colonne1.innerHTML += element.pseudo;
+	        var colonne2 = ligne.insertCell(1);//on ajoute la seconde cellule
+	        colonne2.innerHTML += element.reponse;
+        });
+    }
+    console.log(tableauReponse);
+    if(tableauReponse != null){
+        tableauReponse.style.display = "table";
+    }
 }
+
+function envoyerReponse(){
+    let reponse = reponseField.value;
+    let pseudo = roomServer.pseudo;
+    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo });
+    roomServer.register("ReponseEnvoye", (data) => {
+        if (data.status === 404) {
+            alert("Reponse non transmise");
+        } else if (data.status === 200) {
+            console.log("ReponseEnvoyé");
+        }
+    });
+    boutonReponse.style.display = "none";
+}
+
+boutonReponse.addEventListener("click", envoyerReponse);

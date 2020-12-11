@@ -116,6 +116,7 @@ td {
 
     background-color: white;
     border-radius: 5px;
+
 }
 
 #login-popup h1 {
@@ -184,17 +185,6 @@ td {
     margin-left: auto;
 }
 
-#reveal-answer-div {
-    position: relative;
-    grid-area: reveal;
-}
-
-#reveal-answer-button {
-    position: absolute;
-    display: none;
-    right: 10px;
-}
-
 #next-music-div {
     position: relative;
     grid-area: next;
@@ -206,6 +196,33 @@ td {
     left: 10px;
 }
 
+#boutonReponse {
+    position: absolute;
+    display: none;
+    left: 255px;
+    top: 260px;
+}
+
+#reponseField {
+    position: absolute;
+    display: none;
+    left: 90px;
+    top: 270px;
+}
+
+#texteReponse {
+    position: absolute;
+    display: none;
+    left: 10px;
+    top: 270px;
+}
+
+#tableauReponse {
+    position: absolute;
+    display: table;
+    left: 10px;
+    top: 300px;
+}
 
 #submit-playlist {
     grid-area: playlist;

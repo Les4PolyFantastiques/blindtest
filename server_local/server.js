@@ -6,7 +6,9 @@ const PORT = process.env.PORT || 3000;
 
 
 let rooms = {};
+let roomsInGame = {};
 let currentMusic = {};
+let reponses = {};
 let roomMusics = {};
 let roomsNb = 0;
 let userNb = 0;
@@ -24,7 +26,9 @@ wss.on('connection', (client) => {
             submitMusic(msg.data, client);
         } else if (msg.id === "playlist") {
             submitPlaylist(msg.data, client);
-        } 
+        } else if (msg.id == "envoireponse"){
+            receptionReponse(msg.data, client);
+        }
     })
 });
 
@@ -35,6 +39,7 @@ function newRoom(msg, client) {
     let userId = `U_${userNb}`;
     let pseudo = msg.pseudo;
 
+    roomsInGame[room] = {inGame: false};
     rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
     currentMusic[room] = 0;
 
@@ -53,7 +58,7 @@ function joinRoom(msg, client) {
     let userId = `U_${userNb}`;
     let pseudo = msg.pseudo;
 
-    if (!rooms.hasOwnProperty(room)) {
+    if (!rooms.hasOwnProperty(room) || roomsInGame[room].inGame == true) {
         sendToClient(client, "roomJoined", { status: 404 });
         return;
     }
@@ -88,7 +93,8 @@ function joinRoom(msg, client) {
 
 function nextMusic(msg) {
     let roomId = msg.roomId;
-
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
     if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
     rooms[roomId].forEach((user) => {
@@ -100,13 +106,28 @@ function submitMusic(msg) {
     let roomId = msg.roomId;
 
     rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title });
+        sendToClient(user.client, "submitMusic", { title: roomMusics[roomId][currentMusic[roomId]].title, reponse: reponses[roomId] });
     })
     currentMusic[roomId] += 1;
+    reponses[roomId]=[];
+    reponses[roomId].length = 0;
+}
+
+function receptionReponse(msg, client){
+    let proposition = msg.reponse;
+    let pseudo = msg.pseudo;
+    let room = msg.roomId;
+    if(reponses[room] == null){
+        reponses[room] = [{pseudo: pseudo, reponse: proposition}];
+    }
+    else reponses[room].push({ pseudo: pseudo, reponse: proposition});
+    sendToClient(client, "ReponseEnvoye", { status: 200});
 }
 
 function submitPlaylist(msg) {
     let roomId = msg.roomId;
+
+    roomsInGame[roomId].inGame = true;
 
     getPlaylist(msg.playlistId, (music) => {
         roomMusics[roomId] = music.sort(() => Math.random() - 0.5);
