@@ -2,6 +2,7 @@ let nextButton = document.getElementById("next-music-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
 let boutonReponse = document.getElementById("boutonReponse");
+let reponsediv = document.getElementById("reponse-div");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
 var tableauReponse = document.getElementById("tableauReponse");
@@ -58,6 +59,7 @@ function onYouTubeIframeAPIReady() {
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
+    //roomServer.register("scoreUpdate")
 
     if (AmICreator) {
         document.getElementById("submit-playlist-button").addEventListener("click", submitPlaylist);
@@ -123,6 +125,7 @@ function playNextMusic(data) {
 
     done = false;
     nextButton.style.display = "none";
+    reponsediv.style.display = "initial"
     textDiv.innerText = "Now Playing";
     var ctrlq1 = document.getElementById("youtube-audio1");
     ctrlq1.dataset.video = data.token;
@@ -138,16 +141,43 @@ function submitPlaylist() {
 function revealAnswer(data) {
     done = true;
     nextButton.style.display = "initial";
+    reponsediv.style.display = "none"
     player1.pauseVideo();
     textDiv.innerText = data.title;
     var array = data.reponse;
+    displayArray(array);
+    roomServer.register("bonneReponse", function(outerArray){ 
+        var longueur = tableauReponse.rows.length;
+        for(i=0; i < longueur; i++){
+            tableauReponse.deleteRow(-1);
+        }
+        displayArray(outerArray.array);
+    });
+}
+
+function displayArray(array) {
+    console.log(array);
     if(array != null){
         array.forEach(element => {
             var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
 	        var colonne1 = ligne.insertCell(0);//on a une ajouté une cellule
 	        colonne1.innerHTML += element.pseudo;
 	        var colonne2 = ligne.insertCell(1);//on ajoute la seconde cellule
-	        colonne2.innerHTML += element.reponse;
+            colonne2.innerHTML += element.reponse;
+            var colonne3 = ligne.insertCell(2);
+            boutonVF = document.createElement("button");
+            boutonVF.style.backgroundColor = element.vf ? "#1D8B28" : "#B43636";
+            boutonVF.style.color = "#313337";
+            boutonVF.style.height = '30px';
+            boutonVF.style.display = "initial";
+            boutonVF.innerHTML = element.vf ? "TRUE" : "FAUX";
+            colonne3.appendChild(boutonVF);
+            if (AmICreator){
+                boutonVF.addEventListener("click", function(){
+                    element.vf = !element.vf;
+                    roomServer.emit("bonneReponse", {roomId: roomServer.roomId, array:array})
+                });               
+            }
         });
     }
     console.log(tableauReponse);
@@ -167,7 +197,7 @@ function envoyerReponse(){
             console.log("ReponseEnvoyé");
         }
     });
-    boutonReponse.style.display = "none";
+    reponsediv.style.display = "none";
 }
 
 boutonReponse.addEventListener("click", envoyerReponse);

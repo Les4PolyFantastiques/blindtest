@@ -28,6 +28,8 @@ wss.on('connection', (client) => {
             submitPlaylist(msg.data, client);
         } else if (msg.id == "envoireponse"){
             receptionReponse(msg.data, client);
+        } else if (msg.id == "bonneReponse"){
+            bonneReponse(msg.data, client);
         }
     })
 });
@@ -118,9 +120,9 @@ function receptionReponse(msg, client){
     let pseudo = msg.pseudo;
     let room = msg.roomId;
     if(reponses[room] == null){
-        reponses[room] = [{pseudo: pseudo, reponse: proposition}];
+        reponses[room] = [{pseudo: pseudo, reponse: proposition, vf: false}];
     }
-    else reponses[room].push({ pseudo: pseudo, reponse: proposition});
+    else reponses[room].push({ pseudo: pseudo, reponse: proposition, vf: false});
     sendToClient(client, "ReponseEnvoye", { status: 200});
 }
 
@@ -135,9 +137,22 @@ function submitPlaylist(msg) {
     });
 }
 
+function bonneReponse(msg, client){
+    // let newvf = msg.vf;
+    let roomId = msg.roomId;
+    reponses[roomId] = msg.array;
+    rooms[roomId].forEach((user) => {
+        sendToClient(user.client, "bonneReponse", { array: reponses[roomId] });
+    });
+
+    //let index = reponses[room].map(function(o){return o.pseudo;}).indexOf(pseudo);
+    
+}
+
 function sendToClient(client, id, msg) {
     client.send(JSON.stringify({ id: id, data: msg }));
 }
+
 
 server.listen(PORT);
 
