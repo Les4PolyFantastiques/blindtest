@@ -33,17 +33,32 @@ function startGame(isCreator) {
 function addTheNewPlayer(data) {
     var table_players = document.getElementById("table-players");
     var newLine = table_players.insertRow(-1);
-    var newCel = newLine.insertCell(-1);
+    var newCel = newLine.insertCell(0);
+    var secondCel = newLine.insertCell(1);
     var playerName = document.createTextNode(data.pseudo);
     newCel.appendChild(playerName);
+    secondCel.innerHTML = 0;
 }
 
 function updateListOfPlayers(data) {
     var table_players = document.getElementById("table-players");
     var newLine = table_players.insertRow(-1);
-    var newCel = newLine.insertCell(-1);
+    var newCel = newLine.insertCell(0);
+    var secondCel = newLine.insertCell(1);
     var playerName = document.createTextNode(data.name);
     newCel.appendChild(playerName);
+    secondCel.innerHTML = 0;;
+}
+
+function updateScore(classement){
+    var table_players = document.getElementById("table-players");
+    classement.forEach((joueur) => {
+        for (var i=1; i<table_players.rows.length; i++) { 
+            if (table_players.rows[i].querySelectorAll('td')[0].innerHTML == joueur.pseudo){
+                table_players.rows[i].querySelectorAll('td')[1].innerHTML = joueur.score;
+            } 
+        } 
+    });
 }
 
 function removePlayer(data) {
@@ -59,7 +74,6 @@ function onYouTubeIframeAPIReady() {
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
-    //roomServer.register("scoreUpdate")
 
     if (AmICreator) {
         document.getElementById("submit-playlist-button").addEventListener("click", submitPlaylist);
@@ -118,6 +132,9 @@ function playNextMusic(data) {
     texteReponse.style.display = "block";
     tableauReponse.style.display = "none";
   
+    var classement = data.classement;
+    updateScore(classement);
+
     var longueur = tableauReponse.rows.length;
     for(i=0; i < longueur; i++){
         tableauReponse.deleteRow(-1);
@@ -134,7 +151,7 @@ function playNextMusic(data) {
 
 function submitPlaylist() {
     let playlistId = document.getElementById("submit-playlist-id").value;
-    roomServer.emit("playlist", { roomId: roomServer.roomId, playlistId: playlistId });
+    roomServer.emit("playlist", { roomId: roomServer.roomId, playlistId: playlistId});
     document.getElementById("submit-playlist").style.display = "none";
 }
 
@@ -156,7 +173,6 @@ function revealAnswer(data) {
 }
 
 function displayArray(array) {
-    console.log(array);
     if(array != null){
         array.forEach(element => {
             var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
@@ -178,9 +194,10 @@ function displayArray(array) {
                     roomServer.emit("bonneReponse", {roomId: roomServer.roomId, array:array})
                 });               
             }
+            var colonne4 = ligne.insertCell(3);
+            colonne4.innerHTML = element.points;
         });
     }
-    console.log(tableauReponse);
     if(tableauReponse != null){
         tableauReponse.style.display = "table";
     }
@@ -189,12 +206,11 @@ function displayArray(array) {
 function envoyerReponse(){
     let reponse = reponseField.value;
     let pseudo = roomServer.pseudo;
-    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo });
+    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo});
     roomServer.register("ReponseEnvoye", (data) => {
         if (data.status === 404) {
             alert("Reponse non transmise");
         } else if (data.status === 200) {
-            console.log("ReponseEnvoyé");
         }
     });
     reponsediv.style.display = "none";

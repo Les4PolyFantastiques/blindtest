@@ -39,9 +39,11 @@ function addMyNameToPlayerList() {
     // Maj du tableau des Players
     var table_players = document.getElementById("table-players");
     var newLine = table_players.insertRow(-1);
-    var newCel = newLine.insertCell(-1);
+    var newCel = newLine.insertCell(0);
+    var secondCel = newLine.insertCell(1);
     var playerName = document.createTextNode(pseudoField.value);
     newCel.appendChild(playerName);
+    secondCel.innerHTML = 0;
 }
 
 joinButton.addEventListener("click", joinRoom);

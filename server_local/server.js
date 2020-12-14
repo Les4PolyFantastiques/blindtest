@@ -10,6 +10,7 @@ let roomsInGame = {};
 let currentMusic = {};
 let reponses = {};
 let roomMusics = {};
+let classement = {};
 let roomsNb = 0;
 let userNb = 0;
 
@@ -43,6 +44,7 @@ function newRoom(msg, client) {
 
     roomsInGame[room] = {inGame: false};
     rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
+    classement[room] = [{pseudo: pseudo, score: 0}];
     currentMusic[room] = 0;
 
     sendToClient(client,
@@ -65,6 +67,7 @@ function joinRoom(msg, client) {
         return;
     }
 
+    classement[room].push({pseudo: pseudo, score: 0});
     rooms[room].push({ id: userId, client: client, pseudo: pseudo });
     sendToClient(client, "roomJoined", { status: 200, userId: userId });
 
@@ -95,12 +98,25 @@ function joinRoom(msg, client) {
 
 function nextMusic(msg) {
     let roomId = msg.roomId;
+
+    //Update du classement (nullcheck pour ne pas qu'il se fasse à la toute premiere manche ni quand la musique est passée)
+    if (reponses[roomId] != null){
+        classement[roomId].forEach((joueur) => {
+            reponses[roomId].forEach((player) => {
+                if(joueur.pseudo == player.pseudo){
+                    joueur.score += player.points;
+                }
+            })
+        })
+    }
+
+    //Reinitialisation du tableau de réponses
     reponses[roomId]=[];
     reponses[roomId].length = 0;
     if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
     rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "nextMusic", { token: roomMusics[roomId][currentMusic[roomId]].videoId});
+        sendToClient(user.client, "nextMusic", { token: roomMusics[roomId][currentMusic[roomId]].videoId, classement: classement[roomId]});
     })
 }
 
@@ -120,9 +136,9 @@ function receptionReponse(msg, client){
     let pseudo = msg.pseudo;
     let room = msg.roomId;
     if(reponses[room] == null){
-        reponses[room] = [{pseudo: pseudo, reponse: proposition, vf: false}];
+        reponses[room] = [{pseudo: pseudo, reponse: proposition, vf: false, points: 0}];
     }
-    else reponses[room].push({ pseudo: pseudo, reponse: proposition, vf: false});
+    else reponses[room].push({ pseudo: pseudo, reponse: proposition, vf: false, points: 0});
     sendToClient(client, "ReponseEnvoye", { status: 200});
 }
 
@@ -138,14 +154,28 @@ function submitPlaylist(msg) {
 }
 
 function bonneReponse(msg, client){
-    // let newvf = msg.vf;
     let roomId = msg.roomId;
+
     reponses[roomId] = msg.array;
+
+    var premiervrai = true;
+    reponses[roomId].forEach((joueur) => {
+        if (joueur.vf){
+            if (premiervrai){
+                joueur.points = 2;
+                premiervrai = false;
+            } else {
+                joueur.points = 1;
+            }
+        } else {
+            joueur.points = 0;
+        }
+    })
+
     rooms[roomId].forEach((user) => {
+        
         sendToClient(user.client, "bonneReponse", { array: reponses[roomId] });
     });
-
-    //let index = reponses[room].map(function(o){return o.pseudo;}).indexOf(pseudo);
     
 }
 
