@@ -24,6 +24,31 @@ function startGame(isCreator) {
         textDiv.innerText = "Please select a playlist";
     }
     AmICreator = isCreator;
+
+    roomServer.register("newPlayer", addTheNewPlayer);
+    roomServer.register("updateList", updateListOfPlayers);
+    roomServer.register("removePlayer", removePlayer);
+}
+
+function addTheNewPlayer(data) {
+    var table_players = document.getElementById("table-players");
+    var newLine = table_players.insertRow(-1);
+    var newCel = newLine.insertCell(-1);
+    var playerName = document.createTextNode(data.pseudo);
+    newCel.appendChild(playerName);
+}
+
+function updateListOfPlayers(data) {
+    var table_players = document.getElementById("table-players");
+    var newLine = table_players.insertRow(-1);
+    var newCel = newLine.insertCell(-1);
+    var playerName = document.createTextNode(data.name);
+    newCel.appendChild(playerName);
+}
+
+function removePlayer(data) {
+    var table_players = document.getElementById("table-players");
+    table_players.deleteRow(data.userId);
 }
 
 function onYouTubeIframeAPIReady() {

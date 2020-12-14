@@ -68,8 +68,28 @@ function joinRoom(msg, client) {
     rooms[room].push({ id: userId, client: client, pseudo: pseudo });
     sendToClient(client, "roomJoined", { status: 200, userId: userId });
 
+    // Send the new player to all other players in the same room
+    var listCLI = [];
+    rooms[room].forEach((user) => {
+        if (user.client != client){
+            listCLI.push(user.pseudo);
+            sendToClient(user.client, "newPlayer", { pseudo: msg.pseudo});
+        } 
+    })
+
+    // Update the list of players for the new player
+    listCLI.forEach((function(name) {
+        sendToClient(client, "updateList", { name: name });
+    }))
+
     client.on('close', () => {
         rooms[room] = rooms[room].filter((val, i, a) => { return val.id !== userId });
+        // Remove the user of the list of players for all other players
+        rooms[room].forEach((user) => {
+            if (user.client != client){
+                sendToClient(user.client, "removePlayer", { pseudo: msg.pseudo, userId: userId});
+            } 
+        })
     });
 }
 
