@@ -8,7 +8,7 @@ let texteReponse = document.getElementById("texteReponse");
 var tableauReponse = document.getElementById("tableauReponse");
 
 var player1;
-done = true;
+var done = true;
 let AmICreator = false;
 
 function startGame(isCreator) {
@@ -101,7 +101,10 @@ function onPlayerStateChange1(event) {
 }
 
 function stopVideo() {
-    submitAnswer();
+    player1.pauseVideo();
+    if(AmICreator){
+        submitAnswer();
+    }
   }
 
 function next() {
@@ -117,13 +120,14 @@ function playNextMusic(data) {
     boutonReponse.style.display = "block";
     texteReponse.style.display = "block";
     tableauReponse.style.display = "none";
-  
+
     var longueur = tableauReponse.rows.length;
     for(i=0; i < longueur; i++){
         tableauReponse.deleteRow(-1);
     }
 
     done = false;
+    document.getElementById("reponseField").value = "";
     nextButton.style.display = "none";
     reponsediv.style.display = "initial"
     textDiv.innerText = "Now Playing";
@@ -142,7 +146,6 @@ function revealAnswer(data) {
     done = true;
     nextButton.style.display = "initial";
     reponsediv.style.display = "none"
-    player1.pauseVideo();
     textDiv.innerText = data.title;
     var array = data.reponse;
     displayArray(array);
@@ -156,7 +159,6 @@ function revealAnswer(data) {
 }
 
 function displayArray(array) {
-    console.log(array);
     if(array != null){
         array.forEach(element => {
             var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
@@ -180,7 +182,6 @@ function displayArray(array) {
             }
         });
     }
-    console.log(tableauReponse);
     if(tableauReponse != null){
         tableauReponse.style.display = "table";
     }
