@@ -45,25 +45,25 @@ function newRoom(msg, client) {
     rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
     currentMusic[room] = 0;
 
-    sendToClient(client,
-        "roomCreated",
-        { roomId: room, userId: userId });
-
+    sendToClient(client, "roomCreated", { status: 200, roomId: room, userId: userId });
+    
     client.on('close', () => {
         rooms[room] = rooms[room].filter((val, i, a) => { return val.id !== userId });
     });
 }
 
 function joinRoom(msg, client) {
+    if (!rooms.hasOwnProperty(msg.roomId)) {
+        sendToClient(client, "roomJoined", { status: 404 });
+        return;
+    } else if (!rooms.hasOwnProperty(msg.roomId) && roomsInGame[msg.roomId].inGame == true) {
+        sendToClient(client, "roomJoined", { status: 405 });
+        return;
+    }
     let room = msg.roomId;
     userNb += 1;
     let userId = `U_${userNb}`;
     let pseudo = msg.pseudo;
-
-    if (!rooms.hasOwnProperty(room) || roomsInGame[room].inGame == true) {
-        sendToClient(client, "roomJoined", { status: 404 });
-        return;
-    }
 
     rooms[room].push({ id: userId, client: client, pseudo: pseudo });
     sendToClient(client, "roomJoined", { status: 200, userId: userId });
@@ -71,7 +71,7 @@ function joinRoom(msg, client) {
     // Send the new player to all other players in the same room
     var listCLI = [];
     rooms[room].forEach((user) => {
-        if (user.client != client){
+        if (user.client != client){ 
             listCLI.push(user.pseudo);
             sendToClient(user.client, "newPlayer", { pseudo: msg.pseudo});
         } 
@@ -124,6 +124,7 @@ function receptionReponse(msg, client){
     }
     else reponses[room].push({ pseudo: pseudo, reponse: proposition, vf: false});
     sendToClient(client, "ReponseEnvoye", { status: 200});
+    //msg.reponse = "";
 }
 
 function submitPlaylist(msg) {
@@ -156,7 +157,8 @@ function sendToClient(client, id, msg) {
 
 server.listen(PORT);
 
-const PlaylistSummary = require('youtube-playlist-summary')
+const PlaylistSummary = require('youtube-playlist-summary');
+const { exit } = require('process');
 const config = {
     GOOGLE_API_KEY: 'AIzaSyCscobFCKmWDG7SUNo4jcOLU-W48U9Ir7I', // require
     PLAYLIST_ITEM_KEY: ['title', 'videoId'],

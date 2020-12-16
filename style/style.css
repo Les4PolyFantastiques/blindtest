@@ -135,6 +135,10 @@ td {
     margin-bottom: 10px;
 }
 
+#login-popup #trait {
+    border-bottom:2px solid black;
+}
+
 #join-room-div #pseudo-div {
     margin-bottom: 50px;
     text-align: center;
@@ -166,9 +170,19 @@ td {
 }
 
 #login-popup #new-room-button {
+    display: block;
+    margin: 5px;
+    margin-left: auto;
+    margin-right: auto;
+
+    height: 2em;
+    width: 11em;
+
     border: none;
-    background: white;
-    color: blue;
+    border-radius: 5px;
+    background: #313337;
+    color: white;
+    font-size: 1.5em;
 }
 
 #login-popup #new-room-div {
