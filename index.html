@@ -23,31 +23,37 @@
         </div>
     </div>
     <div id="app-body">
-        <div id="text"></div>
+        <div id="text" style="font-weight:bold"></div>
         <div id="submit-playlist">
             <label for="submit-playlist-id">https://www.youtube.com/playlist?list=</label>
             <input type="text" id="submit-playlist-id" value="PLlYKDqBVDxX1Q_jLy_Olg_VlQpl_xZEX1">
-            <button id="submit-playlist-button">Soumettre playlist</button>
+            <button id="submit-playlist-button">Let's gooooo</button>
         </div>
         <div id="next-music-div">
             <button id="next-music-button" title="Reveal answer">Suivant</button>
         </div>
         <div id="table-players-div">
             <table id="table-players">
-                <tr>
-                    <th>Participants</th>
-                </tr>
+                <tbody>
+                    <tr>
+                        <th>Players</th>
+                    </tr>
+                </tbody>
             </table>
         </div>
+
+        <img id="gif-dance" src="./favicon/dance_cool.gif">
+
         <div id="reponse-div">
-            <label for="reponseid" id="texteReponse">Réponse :</label>
-            <input type="text" value="" id="reponseField" name="reponse">
-            <button id="boutonReponse" type="submit">Réponse</button>
+            <label for="reponseid" id="texteReponse">Response :</label>
+            <input type="text" id="reponseField" name="reponse">
+            <button id="boutonReponse" type="submit">Submit</button>
        </div>
     <!--div id="vf-div">
             <button id="vf-bouton">FAUX</button>
        </div-->
        <div id="tableau-div">
+           <!-- <p style="font-weight:bold">Réponses :</p> -->
            <table id = "tableauReponse">
            </table>
        </div>
@@ -71,7 +77,7 @@
             <div id ="pseudo-div">
                 <label for="join-romm-userid">Pseudo-</label>
                 <input type="text" id="join-room-userid" value="">
-                <button id="join-room-button">Rejoindre la Room</button>
+                <button id="join-room-button">Join a room</button>
             </div>
         </div>
     </div>
