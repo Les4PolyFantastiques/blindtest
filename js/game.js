@@ -1,14 +1,16 @@
 let nextButton = document.getElementById("next-music-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
+let gifDance = document.getElementById("gif-dance");
 let boutonReponse = document.getElementById("boutonReponse");
 let reponsediv = document.getElementById("reponse-div");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
 var tableauReponse = document.getElementById("tableauReponse");
+var tableauPlayers = document.getElementById("table-players");
 
 var player1;
-done = true;
+var done = true;
 let AmICreator = false;
 
 function startGame(isCreator) {
@@ -28,6 +30,8 @@ function startGame(isCreator) {
     roomServer.register("newPlayer", addTheNewPlayer);
     roomServer.register("updateList", updateListOfPlayers);
     roomServer.register("removePlayer", removePlayer);
+
+    tableauPlayers.style.display = "table";
 }
 
 function addTheNewPlayer(data) {
@@ -115,7 +119,10 @@ function onPlayerStateChange1(event) {
 }
 
 function stopVideo() {
-    submitAnswer();
+    player1.pauseVideo();
+    if(AmICreator){
+        submitAnswer();
+    }
   }
 
 function next() {
@@ -131,7 +138,6 @@ function playNextMusic(data) {
     boutonReponse.style.display = "block";
     texteReponse.style.display = "block";
     tableauReponse.style.display = "none";
-  
     var classement = data.classement;
     updateScore(classement);
 
@@ -141,9 +147,11 @@ function playNextMusic(data) {
     }
 
     done = false;
+    document.getElementById("reponseField").value = "";
     nextButton.style.display = "none";
     reponsediv.style.display = "initial"
     textDiv.innerText = "Now Playing";
+    gifDance.style.display = "inline-block";
     var ctrlq1 = document.getElementById("youtube-audio1");
     ctrlq1.dataset.video = data.token;
     player1.loadVideoById(ctrlq1.dataset.video);
@@ -159,8 +167,8 @@ function revealAnswer(data) {
     done = true;
     nextButton.style.display = "initial";
     reponsediv.style.display = "none"
-    player1.pauseVideo();
     textDiv.innerText = data.title;
+    gifDance.style.display = "none";
     var array = data.reponse;
     displayArray(array);
     roomServer.register("bonneReponse", function(outerArray){ 
