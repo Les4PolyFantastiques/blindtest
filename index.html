@@ -25,10 +25,14 @@
     <div id="app-body">
         <div id="text" style="font-weight:bold"></div>
         <div id="submit-playlist">
-            <label for="submit-playlist-id">https://www.youtube.com/playlist?list=</label>
+            <label for="submit-playlist-id" id="label-submit" >https://www.youtube.com/playlist?list=</label>
             <input type="text" id="submit-playlist-id" value="PLlYKDqBVDxX1Q_jLy_Olg_VlQpl_xZEX1">
-            <button id="submit-playlist-button">Let's gooooo</button>
         </div>
+        <div id="definitionTimer">
+            <label id="texteTimer">Durée des chansons :</label>
+            <input type="text" id="timerField" value ="20" name="timerField">
+            <button id="submit-playlist-button">Let's gooooo</button>
+       </div>
         <div id="next-music-div">
             <button id="next-music-button" title="Reveal answer">Suivant</button>
         </div>
@@ -42,17 +46,25 @@
                 </tbody>
             </table>
         </div>
-
+        <div id="app"> </div>
         <img id="gif-dance" src="./favicon/dance_cool.gif">
-
         <div id="reponse-div">
             <label for="reponseid" id="texteReponse">Response :</label>
             <input type="text" id="reponseField" name="reponse">
             <button id="boutonReponse" type="submit">Submit</button>
        </div>
+
        <div id="tableau-div">
            <!-- <p style="font-weight:bold">Réponses :</p> -->
            <table id = "tableauReponse">
+               <tbody>
+                    <tr>
+                        <th>Players</th>
+                        <th>Response</th>
+                        <th>Score</th>
+                        <th>Point</th>
+                    </tr>
+                </tbody>
            </table>
        </div>
     </div>
@@ -62,19 +74,19 @@
         <div id="login-popup">
             <h1>Créer une Room</h1>
             <div id ="pseudo-div">
-                <label for="new-room-userid">Pseudo-</label>
-                <input type="text" id="new-room-userid" value="">
+                <!--<label for="new-room-userid">Pseudo </label>-->
+                <input type="text" placeholder="Pseudo" id="new-room-userid" value="">
                 <button id="new-room-button">Let's Go !</button>
             </div>
             <div id="trait"></div>
             <h1>Rejoindre une Room déjà existante</h1>
             <div id="join-room-div">
-                <label for="join-room-roomid">Room-</label>
-                <input type="text" id="join-room-roomid" value="">
+               <!-- <label for="join-room-roomid">Room </label>-->
+                <input type="text" placeholder="Room" id="join-room-roomid" value="">
             </div>
             <div id ="pseudo-div">
-                <label for="join-romm-userid">Pseudo-</label>
-                <input type="text" id="join-room-userid" value="">
+                <!--<label for="join-romm-userid">Pseudo </label>-->
+                <input type="text" placeholder="Pseudo" id="join-room-userid" value="">
                 <button id="join-room-button">Join a room</button>
             </div>
         </div>
