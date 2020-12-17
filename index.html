@@ -29,12 +29,18 @@
             <input type="text" id="submit-playlist-id" value="PLlYKDqBVDxX1Q_jLy_Olg_VlQpl_xZEX1">
         </div>
         <div id="definitionTimer">
-            <label id="texteTimer">Durée des chansons :</label>
-            <input type="text" id="timerField" value ="20" name="timerField">
+            <div style="padding-bottom: 20px;">
+                <label id="texteTimer">Duration of songs (in sec) :</label>
+                <input id="timerField" type="number" min="20" max="60"  value="20" name="timerField" style="text-align: center;">
+            </div>
+            <div style="padding-bottom: 30px;">
+                <label id="texteWinScore">Score to achieve :</label>
+                <input id="winnerScoreField" type="number" min="2" max="100"  value="10" name="winnerScoreField" style="text-align: center;">
+            </div>
             <button id="submit-playlist-button">Let's gooooo</button>
        </div>
         <div id="next-music-div">
-            <button id="next-music-button" title="Reveal answer">Suivant</button>
+            <button id="next-music-button" title="Reveal answer">Next</button>
         </div>
         <div id="table-players-div">
             <table id="table-players">
@@ -61,8 +67,8 @@
                     <tr>
                         <th>Players</th>
                         <th>Response</th>
-                        <th>Score</th>
-                        <th>Point</th>
+                        <th>Correct or not</th>
+                        <th>Points</th>
                     </tr>
                 </tbody>
            </table>
@@ -72,14 +78,14 @@
     <div id="login-screen">
         <div id="login-screen-background"></div>
         <div id="login-popup">
-            <h1>Créer une Room</h1>
+            <h1>Create a Room</h1>
             <div id ="pseudo-div">
                 <!--<label for="new-room-userid">Pseudo </label>-->
                 <input type="text" placeholder="Pseudo" id="new-room-userid" value="">
                 <button id="new-room-button">Let's Go !</button>
             </div>
             <div id="trait"></div>
-            <h1>Rejoindre une Room déjà existante</h1>
+            <h1>Join an already existing Room</h1>
             <div id="join-room-div">
                <!-- <label for="join-room-roomid">Room </label>-->
                 <input type="text" placeholder="Room" id="join-room-roomid" value="">
@@ -89,6 +95,14 @@
                 <input type="text" placeholder="Pseudo" id="join-room-userid" value="">
                 <button id="join-room-button">Join a room</button>
             </div>
+        </div>
+    </div>
+
+    <div id="winner-screen">
+        <div id="winner-screen-background"></div>
+        <div id="winner-popup">
+            <h1 id="winnerCongrats"></h1>
+            <img id="victory-gif" src="./favicon/victory.gif">
         </div>
     </div>
     <script src="./js/game.js"></script>

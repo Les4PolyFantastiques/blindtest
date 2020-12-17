@@ -1,14 +1,14 @@
 let joinButton = document.getElementById("join-room-button");
 let createButton = document.getElementById("new-room-button");
-let roomIdFiel = document.getElementById("join-room-roomid");
+let roomIdField = document.getElementById("join-room-roomid");
 let pseudoFieldJoin = document.getElementById("join-room-userid");
 let pseudoFieldNew = document.getElementById("new-room-userid");
 
 function joinRoom() {
-    let roomId = "room-" + roomIdFiel.value;
+    let roomId = "room-" + roomIdField.value;
     let pseudo = pseudoFieldJoin.value;
     if(pseudo === ""){
-        alert("Veuillez renseigner votre pseudo SVP");
+        alert("Please enter a name");
     }
     else {
         join = false;
@@ -17,13 +17,13 @@ function joinRoom() {
             switch(data.status) {
                 case 404: 
                     if(!join){
-                        alert("L'ID de la Room n'existe pas");
+                        alert("This Room ID doesn't exist");
                         join = true;
                     }
                     break;
                 case 405:
                     if(!join){
-                        alert("La Room a commencé sans vous");
+                        alert("The Room started without you :(");
                         join = true;   
                     }
                     break;
@@ -46,7 +46,7 @@ function joinRoom() {
 function createRoom() {
     let pseudo = pseudoFieldNew.value;
     if (pseudo === ""){
-        alert("Veuillez renseigner votre pseudo SVP");
+        alert("Please enter a name");
     }
     else {
         roomServer.emit("newRoom", {pseudo: pseudo});

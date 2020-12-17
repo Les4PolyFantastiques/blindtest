@@ -11,6 +11,7 @@ let currentMusic = {};
 let reponses = {};
 let roomMusics = {};
 let classement = {};
+let scoreWinOfRooms = {};
 let roomsNb = 0;
 let userNb = 0;
 
@@ -31,8 +32,8 @@ wss.on('connection', (client) => {
             receptionReponse(msg.data, client);
         } else if (msg.id == "bonneReponse"){
             bonneReponse(msg.data, client);
-        } else if (msg.id == "envoiTimer"){
-            envoiTimer(msg.data, client);
+        } else if (msg.id == "envoiTimerAndScore"){
+            envoiTimerAndScore(msg.data, client);
         }
     })
 });
@@ -45,7 +46,7 @@ function newRoom(msg, client) {
     let pseudo = msg.pseudo;
 
     roomsInGame[room] = {inGame: false};
-    rooms[room] = [{ id: userId, client: client, pseudo: pseudo }];
+    rooms[room] = [{ id: userId, client: client, pseudo: pseudo}];
     classement[room] = [{pseudo: pseudo, score: 0}];
     currentMusic[room] = 0;
 
@@ -105,6 +106,9 @@ function joinRoom(msg, client) {
 
 function nextMusic(msg) {
     let roomId = msg.roomId;
+    let roomWinnerScore = scoreWinOfRooms[roomId];
+    //console.log(roomWinnerScore);
+    var winner = null;
 
     //Update du classement (nullcheck pour ne pas qu'il se fasse à la toute premiere manche ni quand la musique est passée)
     if (reponses[roomId] != null){
@@ -112,6 +116,11 @@ function nextMusic(msg) {
             reponses[roomId].forEach((player) => {
                 if(joueur.pseudo == player.pseudo){
                     joueur.score += player.points;
+
+                    // Test si l'on a un vainqueur
+                    if(joueur.score >= roomWinnerScore){
+                        winner = joueur.pseudo;
+                    }
                 }
             })
         })
@@ -122,9 +131,18 @@ function nextMusic(msg) {
     reponses[roomId].length = 0;
     if (!roomMusics.hasOwnProperty(roomId)) return;
     if (currentMusic[roomId] >= roomMusics[roomId].length) return;
-    rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "nextMusic", { token: roomMusics[roomId][currentMusic[roomId]].videoId, classement: classement[roomId]});
-    })
+
+    if (winner == null) {
+       rooms[roomId].forEach((user) => {
+            sendToClient(user.client, "nextMusic", { token: roomMusics[roomId][currentMusic[roomId]].videoId, classement: classement[roomId]});
+        }) 
+    }
+    else {
+        rooms[roomId].forEach((user) => {
+            sendToClient(user.client, "endGame", { winner: winner});
+        }) 
+    }
+    
 }
 
 function submitMusic(msg) {
@@ -181,7 +199,6 @@ function bonneReponse(msg, client){
     })
 
     rooms[roomId].forEach((user) => {
-        
         sendToClient(user.client, "bonneReponse", { array: reponses[roomId] });
     });
     
@@ -214,9 +231,12 @@ function getPlaylist(playlistId, callback){
     })
 }
 
-function envoiTimer(data, client){
+function envoiTimerAndScore(data, client){
     let roomId = data.roomId;
+    let winnerScore = data.WINNER_SCORE;
+    scoreWinOfRooms[roomId] = winnerScore;
+
     rooms[roomId].forEach((user) => {
-        sendToClient(user.client, "TimerRecu", { duree: data.TIME_LIMIT });
+        sendToClient(user.client, "Timer&ScoreRecu", { duree: data.TIME_LIMIT, score: data.WINNER_SCORE });
     });
 }

@@ -73,7 +73,7 @@ body {
     align-content: center;
     justify-content: center;
 
-    color: #c9c6c6;
+    color: #070707;
     font-size: 40px;
     padding-top: 10px;
 }
@@ -94,6 +94,45 @@ td {
 
 #table-players {
     display: none;
+}
+
+/*************** Winner Pop up *************/
+#winner-screen {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+#winner-screen-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background-color: black;
+    opacity: 0.75;
+}
+
+#winner-popup {
+    position: absolute;
+    margin: auto;
+    top: 25%;
+    left: 0px;
+    right: 0px;
+    width: 450px;
+    background-color: white;
+    box-shadow: 0px 4px 20px rgba(32, 32, 32, 0.06);
+    border-radius: 13px;
+
+}
+
+#winner-popup h1 {
+    text-align: center;
+    color: #0066ff;
+    font-size: 3em;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 /*************** Login Pop up *************/
@@ -230,7 +269,7 @@ input[type="text"] {
 #app-body button {
     color: white;
     width: 100px;
-    height: 40px;
+    height: 60px;
     background-repeat: no-repeat;
     background-size: 140px 70px;
     background-position: 0px 0px;
@@ -254,7 +293,8 @@ input[type="text"] {
     display: none;
     left: -27%;
     border-image: linear-gradient(to right, #0066ff, #df39bc);
-	background: linear-gradient(to right, #0066ff, #df39bc);
+    background: linear-gradient(to right, #0066ff, #df39bc);
+    font-size: 20px;
 }
 
 #reponse-div {
@@ -271,6 +311,7 @@ input[type="text"] {
     left: 50%;
     top : 110%;
     grid-area: submit;
+    font-size: 20px;
 }
 
 #reponseField {
@@ -411,17 +452,26 @@ input[type="text"] {
     grid-area: bottom;
 } 
 
+#victory-gif {
+    /* display: none; */
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+} 
+
+
 #table-players-div{
     grid-area: players;
 }
 
 #definitionTimer{
     display: none;
+    flex-direction: column;
     grid-area: text;
     margin-right: auto;
     margin-left: auto;
-    align-content: center;
-    margin-top: 100px;
+    align-content: left;
+    margin-top: 140px;
 }
 #app{
     transform: scale(0.5);
@@ -430,5 +480,6 @@ input[type="text"] {
 }
 #submit-playlist-button{
     border-image: linear-gradient(to right, #0066ff, #df39bc);
-	background: linear-gradient(to right, #0066ff, #df39bc);
+    background: linear-gradient(to right, #0066ff, #df39bc);
+    font-size: 20px;
 }
