@@ -1,13 +1,15 @@
 let nextButton = document.getElementById("next-music-button");
 let submitPlaylistDiv = document.getElementById("submit-playlist");
 let textDiv = document.getElementById("text");
+let gifDance = document.getElementById("gif-dance");
 let boutonReponse = document.getElementById("boutonReponse");
 let reponsediv = document.getElementById("reponse-div");
 let reponseField = document.getElementById("reponseField");
 let texteReponse = document.getElementById("texteReponse");
 var tableauReponse = document.getElementById("tableauReponse");
+
 var dureeTimer = document.getElementById("timerField");
-var labelTimer = document.getElementById("texteTimer");
+var labelTimer = document.getElementById("definitionTimer");
 
 // Start with an initial value of 20 seconds
 var TIME_LIMIT = 0;
@@ -43,8 +45,11 @@ let timePassed = 0;
 
 let remainingPathColor = COLOR_CODES.debut.color;
 
+var tableauPlayers = document.getElementById("table-players");
+
+
 var player1;
-done = true;
+var done = true;
 let AmICreator = false;
 
 function startGame(isCreator) {
@@ -58,30 +63,47 @@ function startGame(isCreator) {
         textDiv.innerText = "Waiting for the creator to select a playlist";
     } else {
         textDiv.innerText = "Please select a playlist";
-        dureeTimer.style.display = "block";
-        labelTimer.style.display = "block";
+        dureeTimer.style.display = "inline";
+        labelTimer.style.display = "inline";
     }
     AmICreator = isCreator;
 
     roomServer.register("newPlayer", addTheNewPlayer);
     roomServer.register("updateList", updateListOfPlayers);
     roomServer.register("removePlayer", removePlayer);
+
+    tableauPlayers.style.display = "table";
 }
 
 function addTheNewPlayer(data) {
     var table_players = document.getElementById("table-players");
     var newLine = table_players.insertRow(-1);
-    var newCel = newLine.insertCell(-1);
+    var newCel = newLine.insertCell(0);
+    var secondCel = newLine.insertCell(1);
     var playerName = document.createTextNode(data.pseudo);
     newCel.appendChild(playerName);
+    secondCel.innerHTML = 0;
 }
 
 function updateListOfPlayers(data) {
     var table_players = document.getElementById("table-players");
     var newLine = table_players.insertRow(-1);
-    var newCel = newLine.insertCell(-1);
+    var newCel = newLine.insertCell(0);
+    var secondCel = newLine.insertCell(1);
     var playerName = document.createTextNode(data.name);
     newCel.appendChild(playerName);
+    secondCel.innerHTML = 0;;
+}
+
+function updateScore(classement){
+    var table_players = document.getElementById("table-players");
+    classement.forEach((joueur) => {
+        for (var i=1; i<table_players.rows.length; i++) { 
+            if (table_players.rows[i].querySelectorAll('td')[0].innerHTML == joueur.pseudo){
+                table_players.rows[i].querySelectorAll('td')[1].innerHTML = joueur.score;
+            } 
+        } 
+    });
 }
 
 function removePlayer(data) {
@@ -97,7 +119,6 @@ function onYouTubeIframeAPIReady() {
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
-    //roomServer.register("scoreUpdate")
 
     if (AmICreator) {
         document.getElementById("submit-playlist-button").addEventListener("click", submitPlaylist);
@@ -143,7 +164,10 @@ function onPlayerStateChange1(event) {
 }
 
 function stopVideo() {
-    submitAnswer();
+    player1.pauseVideo();
+    if(AmICreator){
+        submitAnswer();
+    }
   }
 
 function next() {
@@ -155,20 +179,26 @@ function submitAnswer() {
 }
 
 function playNextMusic(data) {
-    reponseField.style.display = "block";
-    boutonReponse.style.display = "block";
-    texteReponse.style.display = "block";
+    reponseField.style.display = "inline";
+    boutonReponse.style.display = "inline";
+    texteReponse.style.display = "inline";
     tableauReponse.style.display = "none";
-  
+    var classement = data.classement;
+    updateScore(classement);
+
     var longueur = tableauReponse.rows.length;
-    for(i=0; i < longueur; i++){
+    for(i=1; i < longueur; i++){
         tableauReponse.deleteRow(-1);
     }
 
     done = false;
+    document.getElementById("reponseField").value = "";
     nextButton.style.display = "none";
-    reponsediv.style.display = "initial"
+    reponsediv.style.display = "inline-block"
     textDiv.innerText = "Now Playing";
+    gifDance.style.display = "inline-block";
+    dureeTimer.style.display = "none";
+    labelTimer.style.display = "none";
     var ctrlq1 = document.getElementById("youtube-audio1");
     ctrlq1.dataset.video = data.token;
     player1.loadVideoById(ctrlq1.dataset.video);
@@ -220,7 +250,7 @@ function onTimesUp() {
 
 function submitPlaylist() {
     let playlistId = document.getElementById("submit-playlist-id").value;
-    roomServer.emit("playlist", { roomId: roomServer.roomId, playlistId: playlistId });
+    roomServer.emit("playlist", { roomId: roomServer.roomId, playlistId: playlistId});
     document.getElementById("submit-playlist").style.display = "none";
     dureeTimer.style.display = "none";
     labelTimer.style.display = "none";
@@ -231,13 +261,13 @@ function revealAnswer(data) {
     done = true;
     nextButton.style.display = "initial";
     reponsediv.style.display = "none"
-    player1.pauseVideo();
     textDiv.innerText = data.title;
+    gifDance.style.display = "none";
     var array = data.reponse;
     displayArray(array);
     roomServer.register("bonneReponse", function(outerArray){ 
         var longueur = tableauReponse.rows.length;
-        for(i=0; i < longueur; i++){
+        for(i=1; i < longueur; i++){
             tableauReponse.deleteRow(-1);
         }
         displayArray(outerArray.array);
@@ -245,7 +275,6 @@ function revealAnswer(data) {
 }
 
 function displayArray(array) {
-    console.log(array);
     if(array != null){
         array.forEach(element => {
             var ligne = tableauReponse.insertRow(-1);//on a ajouté une ligne
@@ -267,9 +296,10 @@ function displayArray(array) {
                     roomServer.emit("bonneReponse", {roomId: roomServer.roomId, array:array})
                 });               
             }
+            var colonne4 = ligne.insertCell(3);
+            colonne4.innerHTML = element.points;
         });
     }
-    console.log(tableauReponse);
     if(tableauReponse != null){
         tableauReponse.style.display = "table";
     }
@@ -278,12 +308,11 @@ function displayArray(array) {
 function envoyerReponse(){
     let reponse = reponseField.value;
     let pseudo = roomServer.pseudo;
-    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo });
+    roomServer.emit("envoireponse", { roomId: roomServer.roomId, reponse: reponse, pseudo: pseudo});
     roomServer.register("ReponseEnvoye", (data) => {
         if (data.status === 404) {
             alert("Reponse non transmise");
         } else if (data.status === 200) {
-            console.log("ReponseEnvoyé");
         }
     });
     reponsediv.style.display = "none";
