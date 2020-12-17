@@ -197,6 +197,18 @@ input[type="text"] {
     border-radius: 12px;
 }
 
+input[type="number"] {
+    width: 367px;
+    height: 30px;   
+    /* 1 white */
+    background: #FFFFFF;
+    width: 50%;
+    /* 3 gray */
+    border: 1px solid #D0D4D9;
+    box-sizing: border-box;
+    border-radius: 12px;
+}
+
 #join-room-div #pseudo-div label {
     font-size: 2em;
     border-radius: 13px;
