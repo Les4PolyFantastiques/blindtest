@@ -71,6 +71,9 @@ function startGame(isCreator) {
     roomServer.register("newPlayer", addTheNewPlayer);
     roomServer.register("updateList", updateListOfPlayers);
     roomServer.register("removePlayer", removePlayer);
+    roomServer.register("TimerRecu", (data) => {
+        TIME_LIMIT = data.duree;
+    });
 
     tableauPlayers.style.display = "table";
 }
@@ -201,7 +204,7 @@ function playNextMusic(data) {
     labelTimer.style.display = "none";
     var ctrlq1 = document.getElementById("youtube-audio1");
     ctrlq1.dataset.video = data.token;
-    player1.loadVideoById(ctrlq1.dataset.video);
+    player1.loadVideoById({'videoId': ctrlq1.dataset.video, 'startSeconds' : 5});
 
     document.getElementById("app").innerHTML = `
     <div class="base-timer">
@@ -255,11 +258,14 @@ function submitPlaylist() {
     dureeTimer.style.display = "none";
     labelTimer.style.display = "none";
     TIME_LIMIT = Number(dureeTimer.value);
+    roomServer.emit("envoiTimer", {TIME_LIMIT: TIME_LIMIT, roomId: roomServer.roomId});
 }
 
 function revealAnswer(data) {
     done = true;
-    nextButton.style.display = "initial";
+    if(AmICreator){
+        nextButton.style.display = "initial";
+    }
     reponsediv.style.display = "none"
     textDiv.innerText = data.title;
     gifDance.style.display = "none";

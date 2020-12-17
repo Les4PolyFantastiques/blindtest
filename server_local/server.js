@@ -31,6 +31,8 @@ wss.on('connection', (client) => {
             receptionReponse(msg.data, client);
         } else if (msg.id == "bonneReponse"){
             bonneReponse(msg.data, client);
+        } else if (msg.id == "envoiTimer"){
+            envoiTimer(msg.data, client);
         }
     })
 });
@@ -210,4 +212,11 @@ function getPlaylist(playlistId, callback){
     .catch((error) => {
         console.error(error)
     })
+}
+
+function envoiTimer(data, client){
+    let roomId = data.roomId;
+    rooms[roomId].forEach((user) => {
+        sendToClient(user.client, "TimerRecu", { duree: data.TIME_LIMIT });
+    });
 }
