@@ -10,9 +10,12 @@ var tableauReponse = document.getElementById("tableauReponse");
 
 var dureeTimer = document.getElementById("timerField");
 var labelTimer = document.getElementById("definitionTimer");
+var winnerScoreField = document.getElementById("winnerScoreField");
 
 // Start with an initial value of 20 seconds
 var TIME_LIMIT = 0;
+
+var WINNER_SCORE = 0;
 const FULL_DASH_ARRAY = 283;
 
 // Warning occurs at 10s
@@ -64,15 +67,16 @@ function startGame(isCreator) {
     } else {
         textDiv.innerText = "Please select a playlist";
         dureeTimer.style.display = "inline";
-        labelTimer.style.display = "inline";
+        labelTimer.style.display = "flex";
     }
     AmICreator = isCreator;
 
     roomServer.register("newPlayer", addTheNewPlayer);
     roomServer.register("updateList", updateListOfPlayers);
     roomServer.register("removePlayer", removePlayer);
-    roomServer.register("TimerRecu", (data) => {
+    roomServer.register("Timer&ScoreRecu", (data) => {
         TIME_LIMIT = data.duree;
+        WINNER_SCORE = data.score;
     });
 
     tableauPlayers.style.display = "table";
@@ -122,6 +126,7 @@ function onYouTubeIframeAPIReady() {
 
     roomServer.register("nextMusic", playNextMusic);
     roomServer.register("submitMusic", revealAnswer);
+    roomServer.register("endGame", endOfTheGame);
 
     if (AmICreator) {
         document.getElementById("submit-playlist-button").addEventListener("click", submitPlaylist);
@@ -257,8 +262,9 @@ function submitPlaylist() {
     document.getElementById("submit-playlist").style.display = "none";
     dureeTimer.style.display = "none";
     labelTimer.style.display = "none";
-    TIME_LIMIT = Number(dureeTimer.value);
-    roomServer.emit("envoiTimer", {TIME_LIMIT: TIME_LIMIT, roomId: roomServer.roomId});
+    TIME_LIMIT = dureeTimer.value;
+    WINNER_SCORE = winnerScoreField.value;
+    roomServer.emit("envoiTimerAndScore", {WINNER_SCORE: WINNER_SCORE, TIME_LIMIT: TIME_LIMIT, roomId: roomServer.roomId});
 }
 
 function revealAnswer(data) {
@@ -294,7 +300,7 @@ function displayArray(array) {
             boutonVF.style.color = "#313337";
             boutonVF.style.height = '30px';
             boutonVF.style.display = "initial";
-            boutonVF.innerHTML = element.vf ? "TRUE" : "FAUX";
+            boutonVF.innerHTML = element.vf ? "TRUE" : "FALSE";
             colonne3.appendChild(boutonVF);
             if (AmICreator){
                 boutonVF.addEventListener("click", function(){
@@ -322,6 +328,14 @@ function envoyerReponse(){
         }
     });
     reponsediv.style.display = "none";
+}
+
+function endOfTheGame(data) {
+    let messageWinner = document.getElementById("winnerCongrats");
+    let winnerPopUp = document.getElementById("winner-screen");
+
+    messageWinner.innerHTML = "CONGRATULATION " + data.winner + " it's a WIN !";
+    winnerPopUp.style.display = "initial";
 }
 
 function formatTimeLeft(time) { 
