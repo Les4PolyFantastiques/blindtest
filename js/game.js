@@ -333,9 +333,16 @@ function envoyerReponse(){
 function endOfTheGame(data) {
     let messageWinner = document.getElementById("winnerCongrats");
     let winnerPopUp = document.getElementById("winner-screen");
+    let menuButton = document.getElementById("back-to-menu");
 
     messageWinner.innerHTML = "CONGRATULATION " + data.winner + " it's a WIN !";
     winnerPopUp.style.display = "initial";
+    menuButton.addEventListener("click", backToMenu);
+}
+
+function backToMenu(){
+    location.reload();
+    return false;
 }
 
 function formatTimeLeft(time) { 

@@ -471,6 +471,25 @@ input[type="number"] {
     display: block;
 } 
 
+#back-to-menu {
+    display: block;
+    margin: 5px;
+    margin-left: auto;
+    margin-right: auto;
+
+    margin-top: 10px;
+    height: 2em;
+    width: 11em;
+
+    border: none;
+    border-radius: 5px;
+    border-image: linear-gradient(to right, #0066ff, #df39bc);
+	background: linear-gradient(to right, #0066ff, #df39bc);
+    color: white;
+    font-size: 1.5em;
+    border-radius: 13px;
+}
+
 
 #table-players-div{
     grid-area: players;
