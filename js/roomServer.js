@@ -5,8 +5,8 @@ class RoomServer {
     pseudo;
 
     constructor() {
-        this.ws = new WebSocket('ws://localhost:3000');
-        //this.ws = new WebSocket('wss://blindtest-chaf.herokuapp.com/');
+        //this.ws = new WebSocket('ws://localhost:3000');
+        this.ws = new WebSocket('wss://blindtest-chaf.herokuapp.com/');
         this.msgHandlers = {};
         this.keepAlive();
         this.ws.onopen = () => { console.log("Connected to room server"); };

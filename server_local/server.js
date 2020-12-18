@@ -58,13 +58,10 @@ function newRoom(msg, client) {
 }
 
 function joinRoom(msg, client) {
-    if (!rooms.hasOwnProperty(msg.roomId)) {
+    if (!rooms.hasOwnProperty(msg.roomId) && roomsInGame[msg.roomId].inGame == true) {
         sendToClient(client, "roomJoined", { status: 404 });
         return;
-    } else if (!rooms.hasOwnProperty(msg.roomId) && roomsInGame[msg.roomId].inGame == true) {
-        sendToClient(client, "roomJoined", { status: 405 });
-        return;
-    }
+    } 
     let room = msg.roomId;
     userNb += 1;
     let userId = `U_${userNb}`;
