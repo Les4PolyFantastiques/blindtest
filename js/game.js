@@ -115,7 +115,6 @@ function updateScore(classement){
 
 function removePlayer(data) {
     var table_players = document.getElementById("table-players");
-    table_players.deleteRow(data.userId);
 }
 
 function onYouTubeIframeAPIReady() {
